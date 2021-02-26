@@ -1,48 +1,77 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { useGlobalState, useGlobalStateUpdate } from '../../contex/globalContex'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios'
 import {
     useHistory
 } from "react-router-dom";
-
-var FontAwesome = require('react-fontawesome')
-
-function Login() {
+import { useGlobalState, useGlobalStateUpdate } from '../../context/globalContext'
+function ForgetPw() {
     let url = 'http://localhost:5000'
-    let [show, setShow] = useState()
-    let history = useHistory()
-    const globalState = useGlobalState()
-    const setGlobalState = useGlobalStateUpdate()
-    function login(event) {
-        event.preventDefault();
+    let [next, setNext] = useState(true);
+    let [next2, setNext2] = useState(true);
+    let [resMsg, setResMsg] = useState('');
+    let [resErrorMsg, setResErrorMsg] = useState('');
+    let form = {
+        boxShadow: "0 0 10px grey",
+        padding: "20px",
+        marginTop: "50px"
+    }
+    function nextStep() {
+        setNext(prev => !prev)
+    }
+    function nextStep2() {
+        setNext2(prev => !prev)
+        console.log(document.getElementById('otp').value)
+
+    }
+    function getEmail(e) {
+        e.preventDefault()
+        let email = document.getElementById('email').value;
         axios({
             method: 'post',
-            url: url + '/login',
+            url: url + '/forget-password',
             data: {
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value
+                email: email,
+            },
+            withCredentials: true
+        }).then((response) => {
+            console.log(response)
+            if (response.data.status === 200) {
+                setResMsg(response.data.message)
+                nextStep()
+            }
+            else {
+                setResErrorMsg(response.data.message)
+            }
+        }, (error) => {
+            console.log(error);
+        });
+    }
+    function ForgetPw2(e) {
+        e.preventDefault()
+        console.log(document.getElementById('password').value)
+        console.log(document.getElementById('otp').value)
+        axios({
+            method: 'post',
+            url: url + '/forget-password-2',
+            data: {
+                newPassword: document.getElementById('password').value,
+                otp: document.getElementById('otp').value,
             },
             withCredentials: true
         }).then((response) => {
             if (response.data.status === 200) {
-                setGlobalState(prev => ({
-                    ...prev,
-                    loginStatus: true,
-                }))
-                history.push("/Dashboard");
+                alert(response.data.message)
+                // location.href = "./login.html"
             }
             else {
-                history.push("/login");
-                setShow(response.data.message)
+                alert(response.data.message)
             }
-        }).catch((error) => {
-            alert(error);
+        }, (error) => {
+            console.log(error);
         });
-    }
-    function goToForget() {
-        history.push("/forgetpw");
-    }
 
+    }
     return (
         <div>
             <div className="limiter">
@@ -72,10 +101,10 @@ function Login() {
                                     <i className="fa fa-lock" aria-hidden="true"></i>
                                 </span>
                             </div>
-<hr style={{marginLeft: "100px"}}></hr>
+                            <hr style={{ marginLeft: "100px" }}></hr>
                             <p onClick={goToForget}
                                 style={{ cursor: "pointer", textAlign: "center", marginLeft: "100px" }}>Forget Password?</p>
-<hr style={{marginLeft: "100px"}}></hr>
+                            <hr style={{ marginLeft: "100px" }}></hr>
                             <div className="container-login100-form-btn">
                                 <button className="login100-form-btn" type="submit">
                                     Log In
@@ -88,4 +117,5 @@ function Login() {
         </div>
     )
 }
-export default Login;
+
+export default ForgetPw

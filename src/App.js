@@ -1,4 +1,5 @@
 import './App.css';
+import React, { useContext } from "react";
 
 import {
   BrowserRouter as Router,
@@ -15,10 +16,14 @@ import Dashboard from "./components/dashboard/dashboard.jsx"
 var FontAwesome = require('react-fontawesome')
 
 function App() {
+
   return (
     <div>
       <Router>
         <div className="App">
+          <div className="logo">
+            Ahmed Sweets
+            </div>
           <nav className="nav">
             <Link to="/" className="first">Home</Link>
             <Link to="/login" className="one">login</Link>
@@ -50,6 +55,7 @@ function App() {
 
         </Switch>
       </Router>
+
     </div>
   );
 }
